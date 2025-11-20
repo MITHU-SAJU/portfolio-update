@@ -2,131 +2,165 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="UTF-8">
     <title>Portfolio Admin Panel</title>
-
     <style>
         body {
             font-family: Arial;
             padding: 20px;
-            max-width: 600px;
+            max-width: 900px;
             margin: auto;
         }
 
-        input,
-        textarea {
+        h2 {
+            margin-top: 40px;
+        }
+
+        textarea,
+        input {
             width: 100%;
             padding: 10px;
             margin: 8px 0;
-            border-radius: 6px;
-            border: 1px solid #ccc;
-            font-size: 16px;
         }
 
-        button {
-            width: 100%;
-            padding: 12px;
-            background: #007bff;
-            border: none;
+        .btn {
+            background: black;
             color: white;
-            font-size: 18px;
-            border-radius: 6px;
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn:hover {
+            opacity: 0.8;
+        }
+
+        .project-box {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-top: 10px;
         }
     </style>
 </head>
 
 <body>
 
-    <h2>Portfolio Admin Panel</h2>
+    <h1>Portfolio Admin Panel</h1>
 
-    <label>Your Name</label>
-    <input type="text" id="name" />
+    <!-- ABOUT SECTION -->
+    <h2>About Section</h2>
+    <textarea id="aboutBio" rows="4" placeholder="Bio"></textarea>
+    <input id="aboutExp" placeholder="Experience (eg. 10+)" />
+    <input id="aboutProjects" placeholder="Projects Completed (eg. 03)" />
+    <button class="btn" onclick="updateAbout()">Update About</button>
 
-    <label>Bio</label>
-    <textarea id="bio"></textarea>
+    <!-- SKILLS SECTION -->
+    <h2>Skills Section</h2>
+    <textarea id="technicalSkills" rows="3" placeholder="Technical Skills (comma separated)"></textarea>
+    <textarea id="toolSkills" rows="3" placeholder="Tools (comma separated)"></textarea>
+    <button class="btn" onclick="updateSkills()">Update Skills</button>
 
-    <label>Profile Image</label>
-    <input type="file" id="profileImage" />
+    <!-- PROJECTS SECTION -->
+    <h2>Projects Section</h2>
+    <div id="projectsContainer"></div>
+    <button class="btn" onclick="addProjectForm()">+ Add Project</button>
+    <br><br>
+    <button class="btn" onclick="updateProjects()">Save All Projects</button>
 
-    <button onclick="updateData()">Update Portfolio</button>
+
     <script type="module">
-        // IMPORT FIREBASE
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-  import { 
-    getFirestore, doc, getDoc, setDoc 
-  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-  import { 
-    getStorage, ref, uploadBytes, getDownloadURL 
-  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
 
-  // FIREBASE CONFIG
-  const firebaseConfig = {
-    apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-    authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-    projectId: "portfolio-update-cc2b4",
-    storageBucket: "portfolio-update-cc2b4.firebasestorage.app",
-    messagingSenderId: "102177318878",
-    appId: "1:102177318878:web:fcf82473b723354dfb5f4f"
-  };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+        authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+        projectId: "portfolio-update-cc2b4"
+    };
 
-  // INITIALIZE
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  const storage = getStorage(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const docRef = doc(db, "portfolio", "content");
 
-  // Firestore Document Reference
-  const docRef = doc(db, "portfolio", "content");
+    // Load existing data
+    async function loadData() {
+        const snap = await getDoc(docRef);
+        if (!snap.exists()) return;
 
-  // LOAD EXISTING DATA
-  async function loadData() {
-    try {
-      const snap = await getDoc(docRef);
-
-      if (snap.exists()) {
         const data = snap.data();
-        console.log("Loaded data:", data);
 
-        document.getElementById("name").value = data.name || "";
-        document.getElementById("bio").value = data.bio || "";
-      } else {
-        console.warn("Document does not exist yet.");
-      }
-    } catch (err) {
-      console.error("Error loading:", err);
+        // ABOUT
+        document.getElementById("aboutBio").value = data.about?.bio || "";
+        document.getElementById("aboutExp").value = data.about?.experience || "";
+        document.getElementById("aboutProjects").value = data.about?.projectsCount || "";
+
+        // SKILLS
+        document.getElementById("technicalSkills").value = (data.skills?.technical || []).join(", ");
+        document.getElementById("toolSkills").value = (data.skills?.tools || []).join(", ");
+
+        // PROJECTS
+        if (data.projects) {
+            data.projects.forEach(p => addProjectForm(p));
+        }
     }
-  }
-  loadData();
 
-  // SAVE / UPDATE DATA
-  window.updateData = async () => {
-    try {
-      let name = document.getElementById("name").value;
-      let bio = document.getElementById("bio").value;
+    loadData();
 
-      let profileUrl = null;
-      const file = document.getElementById("profileImage").files[0];
+    // -------------------- UPDATE ABOUT --------------------
+    window.updateAbout = async function () {
+        await updateDoc(docRef, {
+            about: {
+                bio: document.getElementById("aboutBio").value,
+                experience: document.getElementById("aboutExp").value,
+                projectsCount: document.getElementById("aboutProjects").value
+            }
+        });
+        alert("About Updated!");
+    };
 
-      // Upload image if selected
-      if (file) {
-        const imgRef = ref(storage, "profile.jpg");
-        await uploadBytes(imgRef, file);
-        profileUrl = await getDownloadURL(imgRef);
-      }
+    // -------------------- UPDATE SKILLS --------------------
+    window.updateSkills = async function () {
+        const technical = document.getElementById("technicalSkills").value.split(",").map(s=>s.trim());
+        const tools = document.getElementById("toolSkills").value.split(",").map(s=>s.trim());
 
-      // Use setDoc so it works even if doc does NOT exist
-      await setDoc(docRef, {
-        name,
-        bio,
-        profileImg: profileUrl || null
-      }, { merge: true });
+        await updateDoc(docRef, {
+            skills: { technical, tools }
+        });
+        alert("Skills Updated!");
+    };
 
-      alert("Portfolio updated successfully!");
-    } catch (err) {
-      console.error("Update error:", err);
-      alert("Error updating data. Check console.");
-    }
-  };
+    // -------------------- ADD PROJECT FORM --------------------
+    window.addProjectForm = function (data = {}) {
+        const container = document.getElementById("projectsContainer");
+
+        const box = document.createElement("div");
+        box.className = "project-box";
+
+        box.innerHTML = `
+            <input placeholder="Project Title" class="pTitle" value="${data.title || ""}">
+            <textarea placeholder="Description" class="pDesc">${data.description || ""}</textarea>
+            <input placeholder="Image URL" class="pImg" value="${data.img || ""}">
+            <input placeholder="Project Link" class="pLink" value="${data.link || ""}">
+            <button class="btn" onclick="this.parentElement.remove()">Remove</button>
+        `;
+
+        container.appendChild(box);
+    };
+
+    // -------------------- SAVE PROJECTS --------------------
+    window.updateProjects = async function () {
+        const boxes = document.querySelectorAll(".project-box");
+
+        const projects = [...boxes].map(box => ({
+            title: box.querySelector(".pTitle").value,
+            description: box.querySelector(".pDesc").value,
+            img: box.querySelector(".pImg").value,
+            link: box.querySelector(".pLink").value
+        }));
+
+        await updateDoc(docRef, { projects });
+        alert("Projects Updated!");
+    };
 </script>
 
 </body>
