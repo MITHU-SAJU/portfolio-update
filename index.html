@@ -2,446 +2,279 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <title>Portfolio Admin Panel</title>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* ================= ROOT VARIABLES ================= */
-        :root {
-            --bg: #0d1117;
-            --card: rgba(255, 255, 255, 0.06);
-            --border: rgba(255, 255, 255, 0.08);
-            --muted: #9baec8;
-            --text: #e6eef6;
-            --accent: #5ac8fa;
-            --accent-dark: #009be0;
-            --radius: 14px;
-            --shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
-            font-family: Inter, system-ui;
-        }
-
-        /* ================= BODY ================= */
         body {
-            margin: 0;
-            background: radial-gradient(circle at top, #0f1a2b, #070c16);
-            color: var(--text);
+            background: #f8f9fa;
+            color: #333;
+            font-family: Inter, system-ui, sans-serif;
         }
 
-        .wrap {
-            max-width: 1000px;
-            margin: 40px auto;
-            padding: 20px;
-        }
-
-        /* ================= HEADER ================= */
-        header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 25px;
-        }
-
-        header h1 {
-            font-size: 28px;
-            margin: 0;
-            background: linear-gradient(90deg, var(--accent), #8defff);
-            color: transparent;
-            font-weight: 700;
-        }
-
-        .tagline {
-            color: var(--muted);
-            font-size: 14px;
-        }
-
-        /* ================= CARD ================= */
         .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 22px;
-            margin-top: 22px;
-            box-shadow: var(--shadow);
-            backdrop-filter: blur(18px);
-            transition: 0.25s ease;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
-        .card:hover {
-            border-color: rgba(255, 255, 255, 0.15);
-            transform: translateY(-3px);
+        .card h2 {
+            color: #0d6efd;
+            margin-bottom: 15px;
         }
 
-        /* ================= LABELS & INPUTS ================= */
-        label {
-            display: block;
-            color: var(--muted);
-            font-size: 14px;
-            margin-top: 14px;
-        }
-
-        input,
-        textarea {
-            width: 100%;
-            padding: 11px 12px;
+        .projects-list .project-item {
+            background: #e9ecef;
             border-radius: 10px;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border);
-            color: var(--text);
-            margin-top: 6px;
-            font-size: 15px;
-            transition: 0.2s;
-        }
-
-        input:focus,
-        textarea:focus {
-            border-color: var(--accent);
-            outline: none;
-            background: rgba(255, 255, 255, 0.12);
-        }
-
-        textarea {
-            resize: vertical;
-        }
-
-        .row {
-            display: flex;
-            gap: 12px;
-            margin-top: 10px;
-        }
-
-        .col {
-            flex: 1;
-        }
-
-        /* ================= BUTTONS ================= */
-        .btn {
-            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
-            padding: 11px 16px;
-            border-radius: 10px;
-            border: none;
-            color: #041219;
-            font-weight: 700;
-            cursor: pointer;
-            margin-top: 16px;
-            font-size: 15px;
-            letter-spacing: 0.2px;
-            transition: 0.25s ease;
-            box-shadow: 0 3px 10px rgba(0, 174, 255, 0.3);
-        }
-
-        .btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 6px 14px rgba(0, 174, 255, 0.45);
-        }
-
-        .secondary {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            box-shadow: none;
-        }
-
-        .secondary:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        /* ================= PROJECT LIST ================= */
-        .projects-list {
-            margin-top: 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .project-item {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid var(--border);
-            padding: 14px;
-            border-radius: 10px;
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 14px;
-            transition: 0.25s;
-        }
-
-        .project-item:hover {
-            border-color: var(--accent);
-        }
-
-        .actions {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .note {
-            font-size: 14px;
-            color: var(--muted);
-            margin-top: 10px;
-        }
-
-        /* ================= FOOTER ================= */
-        footer {
-            margin-top: 30px;
-            color: var(--muted);
-            font-size: 14px;
-            text-align: center;
-        }
-
-        @media (max-width:720px) {
-            .row {
-                flex-direction: column;
-            }
+            padding: 12px;
+            margin-bottom: 10px;
         }
     </style>
 </head>
 
 <body>
-    <div class="wrap">
-        <header>
-            <h1>Portfolio Admin</h1>
-            <div class="tagline">Manage your portfolio content</div>
+    <div class="container py-4">
+
+        <header class="mb-4 text-center">
+            <h1 class="fw-bold">Portfolio Admin</h1>
+            <p class="text-muted">Manage your portfolio content</p>
         </header>
 
-        <!-- ABOUT CARD -->
-        <section class="card">
-            <h2>About</h2>
-
-            <label>Bio</label>
-            <textarea id="aboutBio" rows="4"></textarea>
-
-            <div class="row">
-                <div class="col">
-                    <label>Experience</label>
-                    <input id="aboutExp" placeholder="10+" />
+        <!-- ABOUT FORM -->
+        <form id="aboutForm">
+            <div class="card">
+                <h2>About</h2>
+                <div class="mb-3">
+                    <label for="aboutBio" class="form-label">Bio</label>
+                    <textarea id="aboutBio" rows="3" class="form-control"></textarea>
                 </div>
-                <div class="col">
-                    <label>Projects Completed</label>
-                    <input id="aboutProjects" placeholder="03" />
+                <div class="row g-3 mb-3">
+                    <div class="col">
+                        <label for="aboutExp" class="form-label">Experience</label>
+                        <input type="text" id="aboutExp" class="form-control" placeholder="10+">
+                    </div>
+                    <div class="col">
+                        <label for="aboutProjects" class="form-label">Projects Completed</label>
+                        <input type="text" id="aboutProjects" class="form-control" placeholder="03">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label for="resumeUrl" class="form-label">Resume URL</label>
+                    <input type="text" id="resumeUrl" class="form-control" placeholder="https://...">
+                </div>
+                <div class="mb-3">
+                    <label for="aboutImg" class="form-label">Profile Image URL</label>
+                    <input type="text" id="aboutImg" class="form-control" placeholder="https://...">
+                </div>
+                <button type="submit" class="btn btn-primary">Save About</button>
+            </div>
+        </form>
+
+        <!-- SKILLS FORM -->
+        <form id="skillsForm">
+            <div class="card">
+                <h2>Skills</h2>
+                <div class="mb-3">
+                    <label for="technicalSkills" class="form-label">Technical Skills (comma separated)</label>
+                    <textarea id="technicalSkills" rows="2" class="form-control"></textarea>
+                </div>
+                <div class="mb-3">
+                    <label for="toolSkills" class="form-label">Tools (comma separated)</label>
+                    <textarea id="toolSkills" rows="2" class="form-control"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Save Skills</button>
+            </div>
+        </form>
+
+        <!-- PROJECTS FORM -->
+        <form id="projectsForm">
+            <div class="card">
+                <h2>Projects</h2>
+                <div class="row g-2 mb-2">
+                    <div class="col-md-6">
+                        <input id="projTitle" class="form-control" placeholder="Project Title">
+                    </div>
+                    <div class="col-md-6">
+                        <input id="projImg" class="form-control" placeholder="Image URL">
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <input id="projLink" class="form-control mb-2" placeholder="Project URL">
+                    <input id="projBtnText" class="form-control mb-2" placeholder="Button Text">
+                    <textarea id="projDesc" rows="2" class="form-control" placeholder="Description"></textarea>
+                </div>
+                <div class="d-flex gap-2 mb-2 flex-wrap">
+                    <button type="button" class="btn btn-primary" onclick="addProjectToList()">Add Project</button>
+                    <button type="button" class="btn btn-secondary" onclick="clearProjectInputs()">Clear</button>
+                </div>
+                <div id="projectsList" class="projects-list"></div>
+                <div class="d-flex gap-2 mt-2 flex-wrap">
+                    <button type="submit" class="btn btn-primary">Save All Projects</button>
+                    <button type="button" class="btn btn-secondary" onclick="loadProjectsForEdit()">Reload</button>
                 </div>
             </div>
+        </form>
 
-            <label>Resume URL</label>
-            <input id="resumeUrl" placeholder="https://..." />
-
-            <label>Profile Image URL</label>
-            <input id="aboutImg" placeholder="https://..." />
-
-            <button class="btn" onclick="updateAbout()">Save About</button>
-        </section>
-
-        <!-- SKILLS CARD -->
-        <section class="card">
-            <h2>Skills</h2>
-
-            <label>Technical Skills</label>
-            <textarea id="technicalSkills" rows="2"></textarea>
-
-            <label>Tools</label>
-            <textarea id="toolSkills" rows="2"></textarea>
-
-            <button class="btn" onclick="updateSkills()">Save Skills</button>
-        </section>
-
-        <!-- PROJECT CARD -->
-        <section class="card">
-            <h2>Projects</h2>
-
-            <div class="row">
-                <input id="projTitle" placeholder="Project Title" />
-                <input id="projImg" placeholder="Image URL" />
-            </div>
-
-            <input id="projLink" placeholder="Project URL" />
-            <input id="projBtnText" placeholder="Button Text" />
-            <textarea id="projDesc" rows="3" placeholder="Description"></textarea>
-
-            <div class="row">
-                <button class="btn" onclick="addProjectToList()">Add Project</button>
-                <button class="btn secondary" onclick="clearProjectInputs()">Clear</button>
-            </div>
-
-            <div id="projectsList" class="projects-list"></div>
-
-            <div class="row" style="margin-top:10px">
-                <button class="btn" onclick="saveAllProjects()">Save All Projects</button>
-                <button class="btn secondary" onclick="loadProjectsForEdit()">Reload</button>
-            </div>
-        </section>
-
-        <footer>
+        <footer class="text-center mt-4 text-muted">
             Made for <strong>Mithu</strong> — Firestore Connected
         </footer>
     </div>
 
+    <!-- Firebase + JS -->
     <script type="module">
-        // ---------- IMPORTS ----------
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import {
-      getFirestore, doc, getDoc, setDoc
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // ---------- FIREBASE CONFIG (keep your config) ----------
-    const firebaseConfig = {
-      apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-      authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-      projectId: "portfolio-update-cc2b4"
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+    authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+    projectId: "portfolio-update-cc2b4"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const $ = id => document.getElementById(id);
+  let projectsBuffer = [];
+
+  // ------------------ LOAD DATA ------------------
+  async function loadAllPrefill() {
+    try {
+      const aboutSnap = await getDoc(doc(db, "portfolio", "about"));
+      if (aboutSnap.exists()) {
+        const d = aboutSnap.data();
+        $("aboutBio").value = d.bio || "";
+        $("aboutExp").value = d.experience || "";
+        $("aboutProjects").value = d.projectsDone || "";
+        $("resumeUrl").value = d.resumeUrl || "";
+        $("aboutImg").value = d.aboutImg || "";
+      }
+    } catch(e){ console.error("load about:", e); }
+
+    try {
+      const skillsSnap = await getDoc(doc(db, "portfolio", "skills"));
+      if (skillsSnap.exists()){
+        const s = skillsSnap.data();
+        $("technicalSkills").value = (s.technical||[]).join(", ");
+        $("toolSkills").value = (s.tools||[]).join(", ");
+      }
+    } catch(e){ console.error("load skills:", e); }
+
+    await loadProjectsForEdit();
+  }
+
+  async function loadProjectsForEdit(){
+    try {
+      const projSnap = await getDoc(doc(db, "portfolio", "projects"));
+      projectsBuffer = projSnap.exists() ? projSnap.data().projects || [] : [];
+    } catch(e){ console.error("load projects:", e); }
+    renderProjectsList();
+  }
+
+  function renderProjectsList(){
+    const list = $("projectsList");
+    list.innerHTML = "";
+    projectsBuffer.forEach((p, idx)=>{
+      const item = document.createElement("div");
+      item.className = "project-item d-flex justify-content-between align-items-start flex-wrap";
+      item.innerHTML = `
+        <div class="flex-grow-1">
+          <input class="pTitle mb-1 form-control" data-idx="${idx}" value="${p.title||''}" placeholder="Title">
+          <input class="pImg mb-1 form-control" data-idx="${idx}" value="${p.img||''}" placeholder="Image URL">
+          <input class="pLink mb-1 form-control" data-idx="${idx}" value="${p.link||''}" placeholder="Link">
+          <input class="pBtn mb-1 form-control" data-idx="${idx}" value="${p.linkText||''}" placeholder="Button Text">
+          <textarea class="pDesc mb-1 form-control" data-idx="${idx}" rows="2" placeholder="Description">${p.desc||''}</textarea>
+        </div>
+        <div class="d-flex flex-column gap-1 ms-2">
+          <button type="button" class="btn btn-secondary btn-sm" onclick="editProject(${idx})">Save</button>
+          <button type="button" class="btn btn-secondary btn-sm" onclick="removeProject(${idx})">Remove</button>
+        </div>
+      `;
+      list.appendChild(item);
+    });
+  }
+
+  function escapeHtml(s=''){ return String(s).replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+  // ------------------ PROJECTS ------------------
+  window.addProjectToList = function(){
+    const p = {
+      title: $("projTitle").value.trim(),
+      desc: $("projDesc").value.trim(),
+      img: $("projImg").value.trim(),
+      link: $("projLink").value.trim(),
+      linkText: $("projBtnText").value.trim() || "View"
     };
+    if (!p.title) { alert("Enter project title"); return; }
+    projectsBuffer.push(p);
+    renderProjectsList();
+    clearProjectInputs();
+  }
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  window.clearProjectInputs = function(){
+    $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
+  }
 
-    // ---------- Local state for projects editing ----------
-    let projectsBuffer = [];
+  window.editProject = function(idx){
+    const list = document.querySelectorAll("#projectsList .project-item")[idx];
+    if (!list) return;
+    projectsBuffer[idx] = {
+      title: list.querySelector(".pTitle").value,
+      img: list.querySelector(".pImg").value,
+      link: list.querySelector(".pLink").value,
+      linkText: list.querySelector(".pBtn").value,
+      desc: list.querySelector(".pDesc").value
+    };
+    renderProjectsList();
+  }
 
-    // ---------- UTIL ----------
-    const $ = id => document.getElementById(id);
+  window.removeProject = function(idx){
+    projectsBuffer.splice(idx,1);
+    renderProjectsList();
+  }
 
-    // ---------- LOAD existing about/skills/projects to prefill ----------
-    async function loadAllPrefill(){
-      // ABOUT
-      try {
-        const aboutSnap = await getDoc(doc(db, "portfolio", "about"));
-        if (aboutSnap.exists()){
-          const d = aboutSnap.data();
-          $("aboutBio").value = d.bio || "";
-          $("aboutExp").value = d.experience || "";
-          $("aboutProjects").value = d.projectsDone || "";
-          $("resumeUrl").value = d.resumeUrl || "";
-          $("aboutImg").value = d.aboutImg || "";
-        }
-      } catch(e){ console.error("load about:", e); }
-
-      // SKILLS
-      try {
-        const skillsSnap = await getDoc(doc(db, "portfolio", "skills"));
-        if (skillsSnap.exists()){
-          const s = skillsSnap.data();
-          $("technicalSkills").value = (s.technical||[]).join(", ");
-          $("toolSkills").value = (s.tools||[]).join(", ");
-        }
-      } catch(e){ console.error("load skills:", e); }
-
-      // PROJECTS
-      await loadProjectsForEdit();
-    }
-
-    async function loadProjectsForEdit(){
-      try {
-        const projSnap = await getDoc(doc(db, "portfolio", "projects"));
-        projectsBuffer = [];
-        if (projSnap.exists()){
-          projectsBuffer = projSnap.data().projects || [];
-        }
-      } catch(e){ console.error("load projects:", e); }
-      renderProjectsList();
-    }
-
-    function renderProjectsList(){
-      const list = $("projectsList");
-      list.innerHTML = "";
-      projectsBuffer.forEach((p, idx) => {
-        const item = document.createElement("div");
-        item.className = "project-item";
-        item.innerHTML = `
-          <div class="project-inputs">
-            <input class="pTitle" data-idx="${idx}" value="${escapeHtml(p.title||'')}" placeholder="Title" />
-            <input class="pImg" data-idx="${idx}" value="${escapeHtml(p.img||'')}" placeholder="Image URL" />
-            <input class="pLink" data-idx="${idx}" value="${escapeHtml(p.link||'')}" placeholder="Link" />
-            <input class="pBtn" data-idx="${idx}" value="${escapeHtml(p.linkText||'')}" placeholder="Button Text" />
-            <textarea class="pDesc" data-idx="${idx}" rows="2" placeholder="Description">${escapeHtml(p.desc||'')}</textarea>
-          </div>
-          <div class="actions">
-            <button class="btn secondary" onclick="editProject(${idx})">Save</button>
-            <button class="btn secondary" onclick="removeProject(${idx})">Remove</button>
-          </div>
-        `;
-        list.appendChild(item);
+  // ------------------ FORM SUBMITS ------------------
+  $("aboutForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, "portfolio", "about"), {
+        bio: $("aboutBio").value.trim(),
+        experience: $("aboutExp").value.trim(),
+        projectsDone: $("aboutProjects").value.trim(),
+        resumeUrl: $("resumeUrl").value.trim(),
+        aboutImg: $("aboutImg").value.trim()
       });
-    }
+      alert("About saved!");
+      this.reset();
+    } catch(e){ console.error(e); alert("Error saving about: "+e.message); }
+  });
 
-    // small helper to avoid breaking HTML with quotes
-    function escapeHtml(s=''){ return String(s).replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+  $("skillsForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    try {
+      const technical = ($("technicalSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+      const tools = ($("toolSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+      await setDoc(doc(db, "portfolio", "skills"), { technical, tools });
+      alert("Skills saved!");
+      this.reset();
+    } catch(e){ console.error(e); alert("Error saving skills: "+e.message); }
+  });
 
-    // ---------- Add project to local buffer ----------
-    window.addProjectToList = function(){
-      const p = {
-        title: $("projTitle").value.trim(),
-        desc: $("projDesc").value.trim(),
-        img: $("projImg").value.trim(),
-        link: $("projLink").value.trim(),
-        linkText: $("projBtnText").value.trim() || "View"
-      };
-      if (!p.title) { alert("Enter project title"); return; }
-      projectsBuffer.push(p);
+  $("projectsForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+    try {
+      await setDoc(doc(db, "portfolio", "projects"), { projects: projectsBuffer });
+      alert("Projects saved!");
+      this.reset();
+      projectsBuffer = [];
       renderProjectsList();
-      // clear inputs
-      $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
-    };
+    } catch(e){ console.error(e); alert("Error saving projects: "+e.message); }
+  });
 
-    window.clearProjectInputs = function(){
-      $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
-    };
-
-    // edit / remove individual project in buffer
-    window.editProject = function(idx){
-      const list = document.querySelectorAll("#projectsList .project-item")[idx];
-      if (!list) return;
-      const title = list.querySelector(".pTitle").value;
-      const img = list.querySelector(".pImg").value;
-      const link = list.querySelector(".pLink").value;
-      const btn = list.querySelector(".pBtn").value;
-      const desc = list.querySelector(".pDesc").value;
-      projectsBuffer[idx] = { title, img, link, linkText: btn, desc };
-      renderProjectsList();
-    };
-
-    window.removeProject = function(idx){
-      projectsBuffer.splice(idx,1);
-      renderProjectsList();
-    };
-
-    // ---------- Save all projects to Firestore (/portfolio/projects) ----------
-    window.saveAllProjects = async function(){
-      try {
-        await setDoc(doc(db, "portfolio", "projects"), { projects: projectsBuffer });
-        alert("Projects saved.");
-      } catch(e){ console.error(e); alert("Error saving projects: "+e.message); }
-    };
-
-    // ---------- Update About ----------
-    window.updateAbout = async function(){
-      try {
-        const payload = {
-          bio: $("aboutBio").value.trim(),
-          experience: $("aboutExp").value.trim(),
-          projectsDone: $("aboutProjects").value.trim(),
-          resumeUrl: $("resumeUrl").value.trim(),
-          aboutImg: $("aboutImg").value.trim()
-        };
-        await setDoc(doc(db, "portfolio", "about"), payload);
-        alert("About saved.");
-      } catch(e){ console.error(e); alert("Error saving about: "+e.message); }
-    };
-
-    // ---------- Update Skills ----------
-    window.updateSkills = async function(){
-      try {
-        const technical = ($("technicalSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
-        const tools = ($("toolSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
-        await setDoc(doc(db, "portfolio", "skills"), { technical, tools });
-        alert("Skills saved.");
-      } catch(e){ console.error(e); alert("Error saving skills: "+e.message); }
-    };
-
-    // ---------- Save all projects wrapper for button ----------
-    window.saveAllProjects = window.saveAllProjects;
-
-    // ---------- Initialize: load existing values ----------
-    loadAllPrefill();
-
-  </script>
+  loadAllPrefill();
+</script>
 </body>
 
 </html>
