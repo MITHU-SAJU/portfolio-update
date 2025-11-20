@@ -67,91 +67,92 @@
     <br><br>
     <button class="btn" onclick="updateProjects()">Save All Projects</button>
 
-    <script>
+    <script type="module">
         // ====== Firebase Setup ======
-        import {
-            initializeApp
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import {
-            getFirestore,
-            doc,
-            setDoc,
-            addDoc,
-            collection
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import {
+        initializeApp
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+        getFirestore,
+        doc,
+        setDoc,
+        addDoc,
+        collection
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-            authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-            projectId: "portfolio-update-cc2b4"
-        };
+    const firebaseConfig = {
+        apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+        authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+        projectId: "portfolio-update-cc2b4"
+    };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-        // ===============================
-        //       UPDATE ABOUT DATA
-        // ===============================
-        window.updateAbout = async () => {
-            await setDoc(doc(db, "portfolio", "content"), {
-                name: "Mithusaju",
-                bio: document.getElementById("bio").value,
-                experience: document.getElementById("experience").value,
-                projectsCompleted: document.getElementById("completed").value,
-                resumePdf: document.getElementById("resume").value,
-                profileImg: document.getElementById("aboutImage").value
-            });
+    // ===============================
+    //       UPDATE ABOUT DATA
+    // ===============================
+    window.updateAbout = async () => {
+        await setDoc(doc(db, "portfolio", "content"), {
+            name: "Mithusaju",
+            bio: document.getElementById("bio").value,
+            experience: document.getElementById("experience").value,
+            projectsCompleted: document.getElementById("completed").value,
+            resumePdf: document.getElementById("resume").value,
+            profileImg: document.getElementById("aboutImage").value
+        });
 
-            alert("About Section Updated Successfully!");
-        };
+        alert("About Section Updated Successfully!");
+    };
 
-        // ===============================
-        //     UPDATE TECHNICAL SKILLS
-        // ===============================
-        window.updateTechnicalSkills = async () => {
-            const skills = document
-                .getElementById("technicalSkills")
-                .value.split(",")
-                .map(s => s.trim());
+    // ===============================
+    //     UPDATE TECHNICAL SKILLS
+    // ===============================
+    window.updateTechnicalSkills = async () => {
+        const skills = document
+            .getElementById("technicalSkills")
+            .value.split(",")
+            .map(s => s.trim());
 
-            await setDoc(doc(db, "portfolio", "skillsTechnical"), {
-                skills
-            });
+        await setDoc(doc(db, "portfolio", "skillsTechnical"), {
+            skills
+        });
 
-            alert("Technical Skills Updated!");
-        };
+        alert("Technical Skills Updated!");
+    };
 
-        // ===============================
-        //        UPDATE TOOL SKILLS
-        // ===============================
-        window.updateToolSkills = async () => {
-            const skills = document
-                .getElementById("toolSkills")
-                .value.split(",")
-                .map(s => s.trim());
+    // ===============================
+    //        UPDATE TOOL SKILLS
+    // ===============================
+    window.updateToolSkills = async () => {
+        const skills = document
+            .getElementById("toolSkills")
+            .value.split(",")
+            .map(s => s.trim());
 
-            await setDoc(doc(db, "portfolio", "skillsTools"), {
-                skills
-            });
+        await setDoc(doc(db, "portfolio", "skillsTools"), {
+            skills
+        });
 
-            alert("Tool Skills Updated!");
-        };
+        alert("Tool Skills Updated!");
+    };
 
-        // ===============================
-        //        ADD PROJECT
-        // ===============================
-        window.addProject = async () => {
-            await addDoc(collection(db, "portfolio", "projects", "items"), {
-                title: document.getElementById("projectTitle").value,
-                desc: document.getElementById("projectDesc").value,
-                img: document.getElementById("projectImg").value,
-                link: document.getElementById("projectLink").value,
-                buttonText: document.getElementById("projectBtn").value
-            });
+    // ===============================
+    //        ADD PROJECT
+    // ===============================
+    window.addProject = async () => {
+        await addDoc(collection(db, "portfolio", "projects", "items"), {
+            title: document.getElementById("projectTitle").value,
+            desc: document.getElementById("projectDesc").value,
+            img: document.getElementById("projectImg").value,
+            link: document.getElementById("projectLink").value,
+            buttonText: document.getElementById("projectBtn").value
+        });
 
-            alert("Project Added!");
-        };
-    </script>
+        alert("Project Added!");
+    };
+</script>
+
 
 </body>
 
