@@ -67,101 +67,91 @@
     <br><br>
     <button class="btn" onclick="updateProjects()">Save All Projects</button>
 
+    <script>
+        // ====== Firebase Setup ======
+        import {
+            initializeApp
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import {
+            getFirestore,
+            doc,
+            setDoc,
+            addDoc,
+            collection
+        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+            authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+            projectId: "portfolio-update-cc2b4"
+        };
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-        authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-        projectId: "portfolio-update-cc2b4"
-    };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const docRef = doc(db, "portfolio", "content");
+        // ===============================
+        //       UPDATE ABOUT DATA
+        // ===============================
+        window.updateAbout = async () => {
+            await setDoc(doc(db, "portfolio", "content"), {
+                name: "Mithusaju",
+                bio: document.getElementById("bio").value,
+                experience: document.getElementById("experience").value,
+                projectsCompleted: document.getElementById("completed").value,
+                resumePdf: document.getElementById("resume").value,
+                profileImg: document.getElementById("aboutImage").value
+            });
 
-    // Load existing data
-    async function loadData() {
-        const snap = await getDoc(docRef);
-        if (!snap.exists()) return;
+            alert("About Section Updated Successfully!");
+        };
 
-        const data = snap.data();
+        // ===============================
+        //     UPDATE TECHNICAL SKILLS
+        // ===============================
+        window.updateTechnicalSkills = async () => {
+            const skills = document
+                .getElementById("technicalSkills")
+                .value.split(",")
+                .map(s => s.trim());
 
-        // ABOUT
-        document.getElementById("aboutBio").value = data.about?.bio || "";
-        document.getElementById("aboutExp").value = data.about?.experience || "";
-        document.getElementById("aboutProjects").value = data.about?.projectsCount || "";
+            await setDoc(doc(db, "portfolio", "skillsTechnical"), {
+                skills
+            });
 
-        // SKILLS
-        document.getElementById("technicalSkills").value = (data.skills?.technical || []).join(", ");
-        document.getElementById("toolSkills").value = (data.skills?.tools || []).join(", ");
+            alert("Technical Skills Updated!");
+        };
 
-        // PROJECTS
-        if (data.projects) {
-            data.projects.forEach(p => addProjectForm(p));
-        }
-    }
+        // ===============================
+        //        UPDATE TOOL SKILLS
+        // ===============================
+        window.updateToolSkills = async () => {
+            const skills = document
+                .getElementById("toolSkills")
+                .value.split(",")
+                .map(s => s.trim());
 
-    loadData();
+            await setDoc(doc(db, "portfolio", "skillsTools"), {
+                skills
+            });
 
-    // -------------------- UPDATE ABOUT --------------------
-    window.updateAbout = async function () {
-        await updateDoc(docRef, {
-            about: {
-                bio: document.getElementById("aboutBio").value,
-                experience: document.getElementById("aboutExp").value,
-                projectsCount: document.getElementById("aboutProjects").value
-            }
-        });
-        alert("About Updated!");
-    };
+            alert("Tool Skills Updated!");
+        };
 
-    // -------------------- UPDATE SKILLS --------------------
-    window.updateSkills = async function () {
-        const technical = document.getElementById("technicalSkills").value.split(",").map(s=>s.trim());
-        const tools = document.getElementById("toolSkills").value.split(",").map(s=>s.trim());
+        // ===============================
+        //        ADD PROJECT
+        // ===============================
+        window.addProject = async () => {
+            await addDoc(collection(db, "portfolio", "projects", "items"), {
+                title: document.getElementById("projectTitle").value,
+                desc: document.getElementById("projectDesc").value,
+                img: document.getElementById("projectImg").value,
+                link: document.getElementById("projectLink").value,
+                buttonText: document.getElementById("projectBtn").value
+            });
 
-        await updateDoc(docRef, {
-            skills: { technical, tools }
-        });
-        alert("Skills Updated!");
-    };
-
-    // -------------------- ADD PROJECT FORM --------------------
-    window.addProjectForm = function (data = {}) {
-        const container = document.getElementById("projectsContainer");
-
-        const box = document.createElement("div");
-        box.className = "project-box";
-
-        box.innerHTML = `
-            <input placeholder="Project Title" class="pTitle" value="${data.title || ""}">
-            <textarea placeholder="Description" class="pDesc">${data.description || ""}</textarea>
-            <input placeholder="Image URL" class="pImg" value="${data.img || ""}">
-            <input placeholder="Project Link" class="pLink" value="${data.link || ""}">
-            <button class="btn" onclick="this.parentElement.remove()">Remove</button>
-        `;
-
-        container.appendChild(box);
-    };
-
-    // -------------------- SAVE PROJECTS --------------------
-    window.updateProjects = async function () {
-        const boxes = document.querySelectorAll(".project-box");
-
-        const projects = [...boxes].map(box => ({
-            title: box.querySelector(".pTitle").value,
-            description: box.querySelector(".pDesc").value,
-            img: box.querySelector(".pImg").value,
-            link: box.querySelector(".pLink").value
-        }));
-
-        await updateDoc(docRef, { projects });
-        alert("Projects Updated!");
-    };
-</script>
+            alert("Project Added!");
+        };
+    </script>
 
 </body>
 
