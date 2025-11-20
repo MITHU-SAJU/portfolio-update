@@ -2,197 +2,395 @@
 <html lang="en">
 
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8" />
     <title>Portfolio Admin Panel</title>
-
-    <!-- ======= BASIC MODERN UI DESIGN ======= -->
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
+        :root {
+            --bg: #0f1724;
+            --card: #0b1220;
+            --muted: #9aa4b2;
+            --accent: #06b6d4;
+            --glass: rgba(255, 255, 255, 0.03);
+            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background: #f4f4f4;
             margin: 0;
-            padding: 0;
+            background: linear-gradient(180deg, #071021 0%, #081428 100%);
+            color: #e6eef6;
         }
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-            padding: 30px;
-        }
-
-        h1 {
-            background: black;
-            color: white;
-            padding: 18px;
-            text-align: center;
-            border-radius: 10px;
-        }
-
-        section {
-            background: white;
+        .wrap {
+            max-width: 1000px;
+            margin: 28px auto;
             padding: 20px;
-            border-radius: 10px;
-            margin-top: 25px;
-            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
-        h2 {
-            margin-bottom: 15px;
-            color: #333;
+        header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
         }
 
-        textarea,
-        input {
+        header h1 {
+            font-size: 20px;
+            margin: 0;
+            color: var(--accent)
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 12px;
+            padding: 18px;
+            margin-top: 18px;
+            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+        }
+
+        label {
+            display: block;
+            color: var(--muted);
+            font-size: 13px;
+            margin-top: 8px
+        }
+
+        input,
+        textarea {
             width: 100%;
-            padding: 12px;
-            border-radius: 6px;
-            margin: 8px 0 15px 0;
-            border: 1px solid #ccc;
-            font-size: 16px;
+            padding: 10px;
+            border-radius: 8px;
+            background: var(--glass);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            color: #eaf5ff;
+            margin-top: 6px;
+            resize: vertical
+        }
+
+        .row {
+            display: flex;
+            gap: 12px
+        }
+
+        .col {
+            flex: 1
         }
 
         .btn {
-            background: black;
-            color: white;
-            padding: 12px 20px;
-            border-radius: 6px;
-            cursor: pointer;
+            background: linear-gradient(90deg, var(--accent), #7dd3fc);
             border: none;
-            transition: 0.3s;
-            margin-top: 10px;
-        }
-
-        .btn:hover {
-            background: #333;
-        }
-
-        .project-card {
-            border: 1px solid #ccc;
-            padding: 15px;
-            background: #fafafa;
+            padding: 10px 14px;
             border-radius: 8px;
-            margin-bottom: 10px;
+            color: #042028;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 12px
         }
 
-        .add-btn {
-            background: #007bff;
+        .btn.secondary {
+            background: transparent;
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            color: var(--muted)
         }
 
-        .add-btn:hover {
-            background: #0056d2;
+        .projects-list {
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px
+        }
+
+        .project-item {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 12px;
+            border-radius: 8px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+            align-items: center
+        }
+
+        .project-inputs {
+            display: grid;
+            gap: 8px
+        }
+
+        .small {
+            font-size: 13px;
+            color: var(--muted)
+        }
+
+        .actions {
+            display: flex;
+            gap: 8px
+        }
+
+        .note {
+            font-size: 13px;
+            color: var(--muted);
+            margin-top: 8px
+        }
+
+        footer {
+            margin-top: 18px;
+            color: var(--muted);
+            font-size: 13px
+        }
+
+        @media (max-width:720px) {
+            .row {
+                flex-direction: column
+            }
         }
     </style>
 </head>
 
 <body>
+    <div class="wrap">
+        <header>
+            <h1>Portfolio Admin</h1>
+            <div class="small">Edit content → Firestore (portfolio collection)</div>
+        </header>
 
-    <div class="container">
+        <!-- ABOUT -->
+        <section class="card" id="aboutCard">
+            <h2 style="margin:0 0 8px 0">About</h2>
+            <label>Bio</label>
+            <textarea id="aboutBio" rows="4" placeholder="Short bio..."></textarea>
 
-        <h1>Portfolio Admin Panel</h1>
-
-        <!-- ABOUT SECTION -->
-        <section>
-            <h2>About Section</h2>
-
-            <textarea id="bio" rows="4" placeholder="Enter your Bio..."></textarea>
-            <input id="experience" placeholder="Experience (eg. 1+ years)">
-            <input id="completed" placeholder="Projects Completed (eg. 10)">
-            <input id="resume" placeholder="Resume PDF URL">
-            <input id="aboutImage" placeholder="Profile Image URL">
-
-            <button class="btn" onclick="updateAbout()">Update About</button>
-        </section>
-
-        <!-- SKILLS SECTION -->
-        <section>
-            <h2>Skills Section</h2>
-
-            <textarea id="technicalSkills" rows="3"
-                placeholder="Technical Skills (comma separated, e.g. HTML, CSS, JS)"></textarea>
-            <textarea id="toolSkills" rows="3" placeholder="Tools (comma separated)"></textarea>
-
-            <button class="btn" onclick="updateTechnicalSkills()">Update Technical Skills</button>
-            <button class="btn" onclick="updateToolSkills()">Update Tool Skills</button>
-        </section>
-
-        <!-- PROJECT SECTION -->
-        <section>
-            <h2>Projects Section</h2>
-
-            <div id="projectForm">
-                <input id="projectTitle" placeholder="Project Title">
-                <input id="projectDesc" placeholder="Project Description">
-                <input id="projectImg" placeholder="Project Image URL">
-                <input id="projectLink" placeholder="Project Link">
-                <input id="projectBtn" placeholder="Button Text (e.g. Explore)">
+            <div class="row">
+                <div class="col">
+                    <label>Experience (e.g. 10+)</label>
+                    <input id="aboutExp" placeholder="10+" />
+                </div>
+                <div class="col">
+                    <label>Projects Completed (e.g. 03)</label>
+                    <input id="aboutProjects" placeholder="03" />
+                </div>
             </div>
 
-            <button class="btn add-btn" onclick="addProject()">Add Project</button>
+            <label>Resume PDF URL</label>
+            <input id="resumeUrl" placeholder="https://.../resume.pdf" />
+
+            <label>About Image URL (profile)</label>
+            <input id="aboutImg" placeholder="https://..." />
+
+            <button class="btn" onclick="updateAbout()">Save About</button>
+            <div class="note">Tip: upload resume/image to any hosting (or Firebase Storage) and paste the public URL.
+            </div>
         </section>
 
+        <!-- SKILLS -->
+        <section class="card" id="skillsCard">
+            <h2 style="margin:0 0 8px 0">Skills</h2>
+
+            <label>Technical Skills (comma separated)</label>
+            <textarea id="technicalSkills" rows="2" placeholder="HTML, CSS, JavaScript, React"></textarea>
+
+            <label>Tool Skills (comma separated)</label>
+            <textarea id="toolSkills" rows="2" placeholder="GitHub, VSCode, Figma"></textarea>
+
+            <button class="btn" onclick="updateSkills()">Save Skills</button>
+        </section>
+
+        <!-- PROJECTS -->
+        <section class="card" id="projectsCard">
+            <h2 style="margin:0 0 8px 0">Projects</h2>
+
+            <div style="display:flex;gap:8px">
+                <input id="projTitle" placeholder="Title" />
+                <input id="projImg" placeholder="Image URL" />
+            </div>
+            <input id="projLink" placeholder="Project Link (https://...)" />
+            <input id="projBtnText" placeholder="Button text (eg. View / GitHub)" style="margin-top:8px" />
+            <textarea id="projDesc" rows="3" placeholder="Short description" style="margin-top:8px"></textarea>
+
+            <div style="display:flex;gap:8px;margin-top:10px">
+                <button class="btn" onclick="addProjectToList()">Add to list</button>
+                <button class="btn secondary" onclick="clearProjectInputs()">Clear inputs</button>
+            </div>
+
+            <div class="projects-list" id="projectsList" style="margin-top:12px"></div>
+
+            <div style="display:flex;gap:8px;margin-top:12px">
+                <button class="btn" onclick="saveAllProjects()">Save All Projects</button>
+                <button class="btn secondary" onclick="loadProjectsForEdit()">Reload from DB</button>
+            </div>
+
+            <div class="note">You can add multiple projects to the list, edit inline and click "Save All Projects" to
+                push to Firestore.</div>
+        </section>
+
+        <footer>Made for <strong>Mithu</strong> — All edits write to Firestore collection <code>portfolio</code>.
+        </footer>
     </div>
 
-    <!-- ================================
-             FIREBASE SCRIPT
-    ================================ -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        // ---------- IMPORTS ----------
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import {
+      getFirestore, doc, getDoc, setDoc
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-  authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-  projectId: "portfolio-update-cc2b4"
-};
+    // ---------- FIREBASE CONFIG (keep your config) ----------
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+      authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+      projectId: "portfolio-update-cc2b4"
+    };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-/* ===================== UPDATE ABOUT ===================== */
-window.updateAbout = async () => {
-  await setDoc(doc(db, "about", "aboutData"), {
-    bio: document.getElementById("aboutBio").value,
-    experience: document.getElementById("aboutExp").value,
-    projectsDone: document.getElementById("aboutProjects").value,
-    aboutImg: document.getElementById("aboutImage").value || "",
-    resumeUrl: document.getElementById("resumePdf").value || ""
-  });
+    // ---------- Local state for projects editing ----------
+    let projectsBuffer = [];
 
-  alert("About Updated Successfully!");
-};
+    // ---------- UTIL ----------
+    const $ = id => document.getElementById(id);
 
-/* ===================== UPDATE SKILLS ===================== */
-window.updateSkills = async () => {
-  const technical = document.getElementById("technicalSkills").value.split(",").map(s => s.trim());
-  const tools = document.getElementById("toolSkills").value.split(",").map(s => s.trim());
+    // ---------- LOAD existing about/skills/projects to prefill ----------
+    async function loadAllPrefill(){
+      // ABOUT
+      try {
+        const aboutSnap = await getDoc(doc(db, "portfolio", "about"));
+        if (aboutSnap.exists()){
+          const d = aboutSnap.data();
+          $("aboutBio").value = d.bio || "";
+          $("aboutExp").value = d.experience || "";
+          $("aboutProjects").value = d.projectsDone || "";
+          $("resumeUrl").value = d.resumeUrl || "";
+          $("aboutImg").value = d.aboutImg || "";
+        }
+      } catch(e){ console.error("load about:", e); }
 
-  await setDoc(doc(db, "skills", "skillsData"), {
-    technical,
-    tools
-  });
+      // SKILLS
+      try {
+        const skillsSnap = await getDoc(doc(db, "portfolio", "skills"));
+        if (skillsSnap.exists()){
+          const s = skillsSnap.data();
+          $("technicalSkills").value = (s.technical||[]).join(", ");
+          $("toolSkills").value = (s.tools||[]).join(", ");
+        }
+      } catch(e){ console.error("load skills:", e); }
 
-  alert("Skills Updated Successfully!");
-};
+      // PROJECTS
+      await loadProjectsForEdit();
+    }
 
-/* ===================== UPDATE PROJECTS ===================== */
-window.updateProjects = async () => {
-  const items = [...document.querySelectorAll(".project-box")].map(box => ({
-    title: box.querySelector(".pTitle").value,
-    desc: box.querySelector(".pDesc").value,
-    img: box.querySelector(".pImg").value,
-    link: box.querySelector(".pLink").value,
-    linkText: box.querySelector(".pBtn").value
-  }));
+    async function loadProjectsForEdit(){
+      try {
+        const projSnap = await getDoc(doc(db, "portfolio", "projects"));
+        projectsBuffer = [];
+        if (projSnap.exists()){
+          projectsBuffer = projSnap.data().projects || [];
+        }
+      } catch(e){ console.error("load projects:", e); }
+      renderProjectsList();
+    }
 
-  await setDoc(doc(db, "projects", "projectsData"), {
-    projects: items
-  });
+    function renderProjectsList(){
+      const list = $("projectsList");
+      list.innerHTML = "";
+      projectsBuffer.forEach((p, idx) => {
+        const item = document.createElement("div");
+        item.className = "project-item";
+        item.innerHTML = `
+          <div class="project-inputs">
+            <input class="pTitle" data-idx="${idx}" value="${escapeHtml(p.title||'')}" placeholder="Title" />
+            <input class="pImg" data-idx="${idx}" value="${escapeHtml(p.img||'')}" placeholder="Image URL" />
+            <input class="pLink" data-idx="${idx}" value="${escapeHtml(p.link||'')}" placeholder="Link" />
+            <input class="pBtn" data-idx="${idx}" value="${escapeHtml(p.linkText||'')}" placeholder="Button Text" />
+            <textarea class="pDesc" data-idx="${idx}" rows="2" placeholder="Description">${escapeHtml(p.desc||'')}</textarea>
+          </div>
+          <div class="actions">
+            <button class="btn secondary" onclick="editProject(${idx})">Save</button>
+            <button class="btn secondary" onclick="removeProject(${idx})">Remove</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
 
-  alert("Projects Updated Successfully!");
-};
+    // small helper to avoid breaking HTML with quotes
+    function escapeHtml(s=''){ return String(s).replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
 
-    </script>
+    // ---------- Add project to local buffer ----------
+    window.addProjectToList = function(){
+      const p = {
+        title: $("projTitle").value.trim(),
+        desc: $("projDesc").value.trim(),
+        img: $("projImg").value.trim(),
+        link: $("projLink").value.trim(),
+        linkText: $("projBtnText").value.trim() || "View"
+      };
+      if (!p.title) { alert("Enter project title"); return; }
+      projectsBuffer.push(p);
+      renderProjectsList();
+      // clear inputs
+      $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
+    };
 
+    window.clearProjectInputs = function(){
+      $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
+    };
+
+    // edit / remove individual project in buffer
+    window.editProject = function(idx){
+      const list = document.querySelectorAll("#projectsList .project-item")[idx];
+      if (!list) return;
+      const title = list.querySelector(".pTitle").value;
+      const img = list.querySelector(".pImg").value;
+      const link = list.querySelector(".pLink").value;
+      const btn = list.querySelector(".pBtn").value;
+      const desc = list.querySelector(".pDesc").value;
+      projectsBuffer[idx] = { title, img, link, linkText: btn, desc };
+      renderProjectsList();
+    };
+
+    window.removeProject = function(idx){
+      projectsBuffer.splice(idx,1);
+      renderProjectsList();
+    };
+
+    // ---------- Save all projects to Firestore (/portfolio/projects) ----------
+    window.saveAllProjects = async function(){
+      try {
+        await setDoc(doc(db, "portfolio", "projects"), { projects: projectsBuffer });
+        alert("Projects saved.");
+      } catch(e){ console.error(e); alert("Error saving projects: "+e.message); }
+    };
+
+    // ---------- Update About ----------
+    window.updateAbout = async function(){
+      try {
+        const payload = {
+          bio: $("aboutBio").value.trim(),
+          experience: $("aboutExp").value.trim(),
+          projectsDone: $("aboutProjects").value.trim(),
+          resumeUrl: $("resumeUrl").value.trim(),
+          aboutImg: $("aboutImg").value.trim()
+        };
+        await setDoc(doc(db, "portfolio", "about"), payload);
+        alert("About saved.");
+      } catch(e){ console.error(e); alert("Error saving about: "+e.message); }
+    };
+
+    // ---------- Update Skills ----------
+    window.updateSkills = async function(){
+      try {
+        const technical = ($("technicalSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+        const tools = ($("toolSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
+        await setDoc(doc(db, "portfolio", "skills"), { technical, tools });
+        alert("Skills saved.");
+      } catch(e){ console.error(e); alert("Error saving skills: "+e.message); }
+    };
+
+    // ---------- Save all projects wrapper for button ----------
+    window.saveAllProjects = window.saveAllProjects;
+
+    // ---------- Initialize: load existing values ----------
+    loadAllPrefill();
+
+  </script>
 </body>
 
 </html>
