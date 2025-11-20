@@ -5,140 +5,193 @@
     <meta charset="utf-8" />
     <title>Portfolio Admin Panel</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <style>
+        /* ================= ROOT VARIABLES ================= */
         :root {
-            --bg: #0f1724;
-            --card: #0b1220;
-            --muted: #9aa4b2;
-            --accent: #06b6d4;
-            --glass: rgba(255, 255, 255, 0.03);
-            font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            --bg: #0d1117;
+            --card: rgba(255, 255, 255, 0.06);
+            --border: rgba(255, 255, 255, 0.08);
+            --muted: #9baec8;
+            --text: #e6eef6;
+            --accent: #5ac8fa;
+            --accent-dark: #009be0;
+            --radius: 14px;
+            --shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+            font-family: Inter, system-ui;
         }
 
+        /* ================= BODY ================= */
         body {
             margin: 0;
-            background: linear-gradient(180deg, #071021 0%, #081428 100%);
-            color: #e6eef6;
+            background: radial-gradient(circle at top, #0f1a2b, #070c16);
+            color: var(--text);
         }
 
         .wrap {
             max-width: 1000px;
-            margin: 28px auto;
+            margin: 40px auto;
             padding: 20px;
         }
 
+        /* ================= HEADER ================= */
         header {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            margin-bottom: 25px;
         }
 
         header h1 {
-            font-size: 20px;
+            font-size: 28px;
             margin: 0;
-            color: var(--accent)
+            background: linear-gradient(90deg, var(--accent), #8defff);
+            color: transparent;
+            font-weight: 700;
         }
 
+        .tagline {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* ================= CARD ================= */
         .card {
             background: var(--card);
-            border-radius: 12px;
-            padding: 18px;
-            margin-top: 18px;
-            box-shadow: 0 6px 18px rgba(2, 6, 23, 0.6);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 22px;
+            margin-top: 22px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(18px);
+            transition: 0.25s ease;
         }
 
+        .card:hover {
+            border-color: rgba(255, 255, 255, 0.15);
+            transform: translateY(-3px);
+        }
+
+        /* ================= LABELS & INPUTS ================= */
         label {
             display: block;
             color: var(--muted);
-            font-size: 13px;
-            margin-top: 8px
+            font-size: 14px;
+            margin-top: 14px;
         }
 
         input,
         textarea {
             width: 100%;
-            padding: 10px;
-            border-radius: 8px;
-            background: var(--glass);
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            color: #eaf5ff;
+            padding: 11px 12px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: var(--text);
             margin-top: 6px;
-            resize: vertical
+            font-size: 15px;
+            transition: 0.2s;
+        }
+
+        input:focus,
+        textarea:focus {
+            border-color: var(--accent);
+            outline: none;
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        textarea {
+            resize: vertical;
         }
 
         .row {
             display: flex;
-            gap: 12px
+            gap: 12px;
+            margin-top: 10px;
         }
 
         .col {
-            flex: 1
+            flex: 1;
         }
 
+        /* ================= BUTTONS ================= */
         .btn {
-            background: linear-gradient(90deg, var(--accent), #7dd3fc);
+            background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+            padding: 11px 16px;
+            border-radius: 10px;
             border: none;
-            padding: 10px 14px;
-            border-radius: 8px;
-            color: #042028;
+            color: #041219;
+            font-weight: 700;
             cursor: pointer;
-            font-weight: 600;
-            margin-top: 12px
+            margin-top: 16px;
+            font-size: 15px;
+            letter-spacing: 0.2px;
+            transition: 0.25s ease;
+            box-shadow: 0 3px 10px rgba(0, 174, 255, 0.3);
         }
 
-        .btn.secondary {
+        .btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 14px rgba(0, 174, 255, 0.45);
+        }
+
+        .secondary {
             background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            color: var(--muted)
+            border: 1px solid var(--border);
+            color: var(--muted);
+            box-shadow: none;
         }
 
+        .secondary:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* ================= PROJECT LIST ================= */
         .projects-list {
             margin-top: 12px;
             display: flex;
             flex-direction: column;
-            gap: 10px
+            gap: 12px;
         }
 
         .project-item {
-            background: rgba(255, 255, 255, 0.02);
-            padding: 12px;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 14px;
+            border-radius: 10px;
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 10px;
-            align-items: center
+            gap: 14px;
+            transition: 0.25s;
         }
 
-        .project-inputs {
-            display: grid;
-            gap: 8px
-        }
-
-        .small {
-            font-size: 13px;
-            color: var(--muted)
+        .project-item:hover {
+            border-color: var(--accent);
         }
 
         .actions {
             display: flex;
-            gap: 8px
+            flex-direction: column;
+            gap: 8px;
         }
 
         .note {
-            font-size: 13px;
+            font-size: 14px;
             color: var(--muted);
-            margin-top: 8px
+            margin-top: 10px;
         }
 
+        /* ================= FOOTER ================= */
         footer {
-            margin-top: 18px;
+            margin-top: 30px;
             color: var(--muted);
-            font-size: 13px
+            font-size: 14px;
+            text-align: center;
         }
 
         @media (max-width:720px) {
             .row {
-                flex-direction: column
+                flex-direction: column;
             }
         }
     </style>
@@ -148,79 +201,77 @@
     <div class="wrap">
         <header>
             <h1>Portfolio Admin</h1>
-            <div class="small">Edit content → Firestore (portfolio collection)</div>
+            <div class="tagline">Manage your portfolio content</div>
         </header>
 
-        <!-- ABOUT -->
-        <section class="card" id="aboutCard">
-            <h2 style="margin:0 0 8px 0">About</h2>
+        <!-- ABOUT CARD -->
+        <section class="card">
+            <h2>About</h2>
+
             <label>Bio</label>
-            <textarea id="aboutBio" rows="4" placeholder="Short bio..."></textarea>
+            <textarea id="aboutBio" rows="4"></textarea>
 
             <div class="row">
                 <div class="col">
-                    <label>Experience (e.g. 10+)</label>
+                    <label>Experience</label>
                     <input id="aboutExp" placeholder="10+" />
                 </div>
                 <div class="col">
-                    <label>Projects Completed (e.g. 03)</label>
+                    <label>Projects Completed</label>
                     <input id="aboutProjects" placeholder="03" />
                 </div>
             </div>
 
-            <label>Resume PDF URL</label>
-            <input id="resumeUrl" placeholder="https://.../resume.pdf" />
+            <label>Resume URL</label>
+            <input id="resumeUrl" placeholder="https://..." />
 
-            <label>About Image URL (profile)</label>
+            <label>Profile Image URL</label>
             <input id="aboutImg" placeholder="https://..." />
 
             <button class="btn" onclick="updateAbout()">Save About</button>
-            <div class="note">Tip: upload resume/image to any hosting (or Firebase Storage) and paste the public URL.
-            </div>
         </section>
 
-        <!-- SKILLS -->
-        <section class="card" id="skillsCard">
-            <h2 style="margin:0 0 8px 0">Skills</h2>
+        <!-- SKILLS CARD -->
+        <section class="card">
+            <h2>Skills</h2>
 
-            <label>Technical Skills (comma separated)</label>
-            <textarea id="technicalSkills" rows="2" placeholder="HTML, CSS, JavaScript, React"></textarea>
+            <label>Technical Skills</label>
+            <textarea id="technicalSkills" rows="2"></textarea>
 
-            <label>Tool Skills (comma separated)</label>
-            <textarea id="toolSkills" rows="2" placeholder="GitHub, VSCode, Figma"></textarea>
+            <label>Tools</label>
+            <textarea id="toolSkills" rows="2"></textarea>
 
             <button class="btn" onclick="updateSkills()">Save Skills</button>
         </section>
 
-        <!-- PROJECTS -->
-        <section class="card" id="projectsCard">
-            <h2 style="margin:0 0 8px 0">Projects</h2>
+        <!-- PROJECT CARD -->
+        <section class="card">
+            <h2>Projects</h2>
 
-            <div style="display:flex;gap:8px">
-                <input id="projTitle" placeholder="Title" />
+            <div class="row">
+                <input id="projTitle" placeholder="Project Title" />
                 <input id="projImg" placeholder="Image URL" />
             </div>
-            <input id="projLink" placeholder="Project Link (https://...)" />
-            <input id="projBtnText" placeholder="Button text (eg. View / GitHub)" style="margin-top:8px" />
-            <textarea id="projDesc" rows="3" placeholder="Short description" style="margin-top:8px"></textarea>
 
-            <div style="display:flex;gap:8px;margin-top:10px">
-                <button class="btn" onclick="addProjectToList()">Add to list</button>
-                <button class="btn secondary" onclick="clearProjectInputs()">Clear inputs</button>
+            <input id="projLink" placeholder="Project URL" />
+            <input id="projBtnText" placeholder="Button Text" />
+            <textarea id="projDesc" rows="3" placeholder="Description"></textarea>
+
+            <div class="row">
+                <button class="btn" onclick="addProjectToList()">Add Project</button>
+                <button class="btn secondary" onclick="clearProjectInputs()">Clear</button>
             </div>
 
-            <div class="projects-list" id="projectsList" style="margin-top:12px"></div>
+            <div id="projectsList" class="projects-list"></div>
 
-            <div style="display:flex;gap:8px;margin-top:12px">
+            <div class="row" style="margin-top:10px">
                 <button class="btn" onclick="saveAllProjects()">Save All Projects</button>
-                <button class="btn secondary" onclick="loadProjectsForEdit()">Reload from DB</button>
+                <button class="btn secondary" onclick="loadProjectsForEdit()">Reload</button>
             </div>
-
-            <div class="note">You can add multiple projects to the list, edit inline and click "Save All Projects" to
-                push to Firestore.</div>
         </section>
 
-        <footer>Made for <strong>Mithu</strong> — All edits write to Firestore collection <code>portfolio</code>.
+        <footer>
+            Made for <strong>Mithu</strong> — Firestore Connected
         </footer>
     </div>
 
