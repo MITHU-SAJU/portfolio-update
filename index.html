@@ -44,7 +44,7 @@
 
         <!-- ABOUT FORM -->
         <form id="aboutForm">
-            <div class="card">
+            <div class="card mb-3">
                 <h2>About</h2>
                 <div class="mb-3">
                     <label for="aboutBio" class="form-label">Bio</label>
@@ -74,23 +74,36 @@
 
         <!-- SKILLS FORM -->
         <form id="skillsForm">
-            <div class="card">
+            <div class="card mb-3">
                 <h2>Skills</h2>
-                <div class="mb-3">
-                    <label for="technicalSkills" class="form-label">Technical Skills (comma separated)</label>
-                    <textarea id="technicalSkills" rows="2" class="form-control"></textarea>
+                <!-- Technical Skills -->
+                <div class="mb-2">
+                    <label class="form-label">Technical Skills</label>
+                    <div class="input-group mb-1">
+                        <input type="text" id="newTechnicalSkill" class="form-control"
+                            placeholder="Enter technical skill">
+                        <button type="button" class="btn btn-primary" onclick="addTechnicalSkill()">Add</button>
+                    </div>
+                    <div id="technicalSkillsList"></div>
                 </div>
-                <div class="mb-3">
-                    <label for="toolSkills" class="form-label">Tools (comma separated)</label>
-                    <textarea id="toolSkills" rows="2" class="form-control"></textarea>
+
+                <!-- Tools -->
+                <div class="mb-2">
+                    <label class="form-label">Tools</label>
+                    <div class="input-group mb-1">
+                        <input type="text" id="newToolSkill" class="form-control" placeholder="Enter tool">
+                        <button type="button" class="btn btn-primary" onclick="addToolSkill()">Add</button>
+                    </div>
+                    <div id="toolSkillsList"></div>
                 </div>
+
                 <button type="submit" class="btn btn-primary">Save Skills</button>
             </div>
         </form>
 
         <!-- PROJECTS FORM -->
         <form id="projectsForm">
-            <div class="card">
+            <div class="card mb-3">
                 <h2>Projects</h2>
                 <div class="row g-2 mb-2">
                     <div class="col-md-6">
@@ -120,161 +133,237 @@
         <footer class="text-center mt-4 text-muted">
             Made for <strong>Mithu</strong> — Firestore Connected
         </footer>
+
     </div>
 
     <!-- Firebase + JS -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-  import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+    import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-    authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-    projectId: "portfolio-update-cc2b4"
-  };
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+      authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+      projectId: "portfolio-update-cc2b4"
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const $ = id => document.getElementById(id);
 
-  const $ = id => document.getElementById(id);
-  let projectsBuffer = [];
-
-  // ------------------ LOAD DATA ------------------
-  async function loadAllPrefill() {
-    try {
-      const aboutSnap = await getDoc(doc(db, "portfolio", "about"));
-      if (aboutSnap.exists()) {
-        const d = aboutSnap.data();
-        $("aboutBio").value = d.bio || "";
-        $("aboutExp").value = d.experience || "";
-        $("aboutProjects").value = d.projectsDone || "";
-        $("resumeUrl").value = d.resumeUrl || "";
-        $("aboutImg").value = d.aboutImg || "";
-      }
-    } catch(e){ console.error("load about:", e); }
-
-    try {
-      const skillsSnap = await getDoc(doc(db, "portfolio", "skills"));
-      if (skillsSnap.exists()){
-        const s = skillsSnap.data();
-        $("technicalSkills").value = (s.technical||[]).join(", ");
-        $("toolSkills").value = (s.tools||[]).join(", ");
-      }
-    } catch(e){ console.error("load skills:", e); }
-
-    await loadProjectsForEdit();
-  }
-
-  async function loadProjectsForEdit(){
-    try {
-      const projSnap = await getDoc(doc(db, "portfolio", "projects"));
-      projectsBuffer = projSnap.exists() ? projSnap.data().projects || [] : [];
-    } catch(e){ console.error("load projects:", e); }
-    renderProjectsList();
-  }
-
-  function renderProjectsList(){
-    const list = $("projectsList");
-    list.innerHTML = "";
-    projectsBuffer.forEach((p, idx)=>{
-      const item = document.createElement("div");
-      item.className = "project-item d-flex justify-content-between align-items-start flex-wrap";
-      item.innerHTML = `
-        <div class="flex-grow-1">
-          <input class="pTitle mb-1 form-control" data-idx="${idx}" value="${p.title||''}" placeholder="Title">
-          <input class="pImg mb-1 form-control" data-idx="${idx}" value="${p.img||''}" placeholder="Image URL">
-          <input class="pLink mb-1 form-control" data-idx="${idx}" value="${p.link||''}" placeholder="Link">
-          <input class="pBtn mb-1 form-control" data-idx="${idx}" value="${p.linkText||''}" placeholder="Button Text">
-          <textarea class="pDesc mb-1 form-control" data-idx="${idx}" rows="2" placeholder="Description">${p.desc||''}</textarea>
-        </div>
-        <div class="d-flex flex-column gap-1 ms-2">
-          <button type="button" class="btn btn-secondary btn-sm" onclick="editProject(${idx})">Save</button>
-          <button type="button" class="btn btn-secondary btn-sm" onclick="removeProject(${idx})">Remove</button>
-        </div>
-      `;
-      list.appendChild(item);
+    // ------------------ ABOUT FORM ------------------
+    $("aboutForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      try {
+        await setDoc(doc(db,"portfolio","about"),{
+          bio: $("aboutBio").value.trim(),
+          experience: $("aboutExp").value.trim(),
+          projectsDone: $("aboutProjects").value.trim(),
+          resumeUrl: $("resumeUrl").value.trim(),
+          aboutImg: $("aboutImg").value.trim()
+        });
+        alert("About saved!");
+        this.reset();
+      } catch(e){ console.error(e); alert("Error saving about: "+e.message); }
     });
-  }
 
-  function escapeHtml(s=''){ return String(s).replaceAll('"','&quot;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+    // ------------------ PROJECTS ------------------
+    let projectsBuffer = [];
 
-  // ------------------ PROJECTS ------------------
-  window.addProjectToList = function(){
-    const p = {
-      title: $("projTitle").value.trim(),
-      desc: $("projDesc").value.trim(),
-      img: $("projImg").value.trim(),
-      link: $("projLink").value.trim(),
-      linkText: $("projBtnText").value.trim() || "View"
-    };
-    if (!p.title) { alert("Enter project title"); return; }
-    projectsBuffer.push(p);
-    renderProjectsList();
-    clearProjectInputs();
-  }
-
-  window.clearProjectInputs = function(){
-    $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
-  }
-
-  window.editProject = function(idx){
-    const list = document.querySelectorAll("#projectsList .project-item")[idx];
-    if (!list) return;
-    projectsBuffer[idx] = {
-      title: list.querySelector(".pTitle").value,
-      img: list.querySelector(".pImg").value,
-      link: list.querySelector(".pLink").value,
-      linkText: list.querySelector(".pBtn").value,
-      desc: list.querySelector(".pDesc").value
-    };
-    renderProjectsList();
-  }
-
-  window.removeProject = function(idx){
-    projectsBuffer.splice(idx,1);
-    renderProjectsList();
-  }
-
-  // ------------------ FORM SUBMITS ------------------
-  $("aboutForm").addEventListener("submit", async function(e){
-    e.preventDefault();
-    try {
-      await setDoc(doc(db, "portfolio", "about"), {
-        bio: $("aboutBio").value.trim(),
-        experience: $("aboutExp").value.trim(),
-        projectsDone: $("aboutProjects").value.trim(),
-        resumeUrl: $("resumeUrl").value.trim(),
-        aboutImg: $("aboutImg").value.trim()
-      });
-      alert("About saved!");
-      this.reset();
-    } catch(e){ console.error(e); alert("Error saving about: "+e.message); }
-  });
-
-  $("skillsForm").addEventListener("submit", async function(e){
-    e.preventDefault();
-    try {
-      const technical = ($("technicalSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
-      const tools = ($("toolSkills").value || "").split(",").map(s=>s.trim()).filter(Boolean);
-      await setDoc(doc(db, "portfolio", "skills"), { technical, tools });
-      alert("Skills saved!");
-      this.reset();
-    } catch(e){ console.error(e); alert("Error saving skills: "+e.message); }
-  });
-
-  $("projectsForm").addEventListener("submit", async function(e){
-    e.preventDefault();
-    try {
-      await setDoc(doc(db, "portfolio", "projects"), { projects: projectsBuffer });
-      alert("Projects saved!");
-      this.reset();
-      projectsBuffer = [];
+    window.addProjectToList = function(){
+      const p = {
+        title: $("projTitle").value.trim(),
+        desc: $("projDesc").value.trim(),
+        img: $("projImg").value.trim(),
+        link: $("projLink").value.trim(),
+        linkText: $("projBtnText").value.trim() || "View"
+      };
+      if (!p.title) { alert("Enter project title"); return; }
+      projectsBuffer.push(p);
       renderProjectsList();
-    } catch(e){ console.error(e); alert("Error saving projects: "+e.message); }
-  });
+      clearProjectInputs();
+    }
 
-  loadAllPrefill();
-</script>
+    window.clearProjectInputs = function(){
+      $("projTitle").value=""; $("projDesc").value=""; $("projImg").value=""; $("projLink").value=""; $("projBtnText").value="";
+    }
+
+    window.editProject = function(idx){
+      const list = document.querySelectorAll("#projectsList .project-item")[idx];
+      projectsBuffer[idx] = {
+        title: list.querySelector(".pTitle").value,
+        img: list.querySelector(".pImg").value,
+        link: list.querySelector(".pLink").value,
+        linkText: list.querySelector(".pBtn").value,
+        desc: list.querySelector(".pDesc").value
+      };
+      renderProjectsList();
+    }
+
+    window.removeProject = function(idx){
+      projectsBuffer.splice(idx,1);
+      renderProjectsList();
+    }
+
+    function renderProjectsList(){
+      const list = $("projectsList");
+      list.innerHTML = "";
+      projectsBuffer.forEach((p, idx)=>{
+        const item = document.createElement("div");
+        item.className = "project-item d-flex justify-content-between align-items-start flex-wrap mb-2";
+        item.innerHTML = `
+          <div class="flex-grow-1">
+            <input class="pTitle mb-1 form-control" data-idx="${idx}" value="${p.title||''}" placeholder="Title">
+            <input class="pImg mb-1 form-control" data-idx="${idx}" value="${p.img||''}" placeholder="Image URL">
+            <input class="pLink mb-1 form-control" data-idx="${idx}" value="${p.link||''}" placeholder="Link">
+            <input class="pBtn mb-1 form-control" data-idx="${idx}" value="${p.linkText||''}" placeholder="Button Text">
+            <textarea class="pDesc mb-1 form-control" data-idx="${idx}" rows="2" placeholder="Description">${p.desc||''}</textarea>
+          </div>
+          <div class="d-flex flex-column gap-1 ms-2">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="editProject(${idx})">Save</button>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="removeProject(${idx})">Remove</button>
+          </div>
+        `;
+        list.appendChild(item);
+      });
+    }
+
+    $("projectsForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      try {
+        await setDoc(doc(db,"portfolio","projects"), { projects: projectsBuffer });
+        alert("Projects saved!");
+        this.reset();
+        projectsBuffer = [];
+        renderProjectsList();
+      } catch(e){ console.error(e); alert("Error saving projects: "+e.message); }
+    });
+
+    async function loadProjectsForEdit(){
+      try {
+        const projSnap = await getDoc(doc(db,"portfolio","projects"));
+        projectsBuffer = projSnap.exists() ? projSnap.data().projects || [] : [];
+      } catch(e){ console.error(e); }
+      renderProjectsList();
+    }
+
+    // ------------------ SKILLS ------------------
+    let technicalSkillsBuffer = [];
+    let toolSkillsBuffer = [];
+
+    window.addTechnicalSkill = function(){
+      const skill = $("newTechnicalSkill").value.trim();
+      if(!skill) return alert("Enter a technical skill");
+      technicalSkillsBuffer.push(skill);
+      $("newTechnicalSkill").value = "";
+      renderTechnicalSkillsList();
+    }
+
+    window.addToolSkill = function(){
+      const skill = $("newToolSkill").value.trim();
+      if(!skill) return alert("Enter a tool");
+      toolSkillsBuffer.push(skill);
+      $("newToolSkill").value = "";
+      renderToolSkillsList();
+    }
+
+    window.editTechnicalSkill = function(idx){
+      const newSkill = prompt("Edit technical skill:", technicalSkillsBuffer[idx]);
+      if(newSkill) { technicalSkillsBuffer[idx] = newSkill.trim(); renderTechnicalSkillsList(); }
+    }
+
+    window.editToolSkill = function(idx){
+      const newSkill = prompt("Edit tool:", toolSkillsBuffer[idx]);
+      if(newSkill) { toolSkillsBuffer[idx] = newSkill.trim(); renderToolSkillsList(); }
+    }
+
+    window.removeTechnicalSkill = function(idx){
+      technicalSkillsBuffer.splice(idx,1);
+      renderTechnicalSkillsList();
+    }
+
+    window.removeToolSkill = function(idx){
+      toolSkillsBuffer.splice(idx,1);
+      renderToolSkillsList();
+    }
+
+    function renderTechnicalSkillsList(){
+      const list = $("technicalSkillsList");
+      list.innerHTML = "";
+      technicalSkillsBuffer.forEach((skill, idx)=>{
+        const div = document.createElement("div");
+        div.className = "d-flex align-items-center gap-2 mb-1 flex-wrap";
+        div.innerHTML = `<span class="badge bg-info text-dark">${skill}</span>
+                         <button type="button" class="btn btn-secondary btn-sm" onclick="editTechnicalSkill(${idx})">Edit</button>
+                         <button type="button" class="btn btn-secondary btn-sm" onclick="removeTechnicalSkill(${idx})">Remove</button>`;
+        list.appendChild(div);
+      });
+    }
+
+    function renderToolSkillsList(){
+      const list = $("toolSkillsList");
+      list.innerHTML = "";
+      toolSkillsBuffer.forEach((skill, idx)=>{
+        const div = document.createElement("div");
+        div.className = "d-flex align-items-center gap-2 mb-1 flex-wrap";
+        div.innerHTML = `<span class="badge bg-warning text-dark">${skill}</span>
+                         <button type="button" class="btn btn-secondary btn-sm" onclick="editToolSkill(${idx})">Edit</button>
+                         <button type="button" class="btn btn-secondary btn-sm" onclick="removeToolSkill(${idx})">Remove</button>`;
+        list.appendChild(div);
+      });
+    }
+
+    $("skillsForm").addEventListener("submit", async function(e){
+      e.preventDefault();
+      try {
+        await setDoc(doc(db,"portfolio","skills"), {
+          technical: technicalSkillsBuffer,
+          tools: toolSkillsBuffer
+        });
+        alert("Skills saved!");
+        this.reset();
+        technicalSkillsBuffer = [];
+        toolSkillsBuffer = [];
+        renderTechnicalSkillsList();
+        renderToolSkillsList();
+      } catch(e){ console.error(e); alert("Error saving skills: "+e.message); }
+    });
+
+    // ------------------ LOAD PREFILL ------------------
+    async function loadAllPrefill(){
+      // About
+      try{
+        const aboutSnap = await getDoc(doc(db,"portfolio","about"));
+        if(aboutSnap.exists()){
+          const d = aboutSnap.data();
+          $("aboutBio").value = d.bio||"";
+          $("aboutExp").value = d.experience||"";
+          $("aboutProjects").value = d.projectsDone||"";
+          $("resumeUrl").value = d.resumeUrl||"";
+          $("aboutImg").value = d.aboutImg||"";
+        }
+      } catch(e){ console.error(e); }
+
+      // Skills
+      try{
+        const skillsSnap = await getDoc(doc(db,"portfolio","skills"));
+        if(skillsSnap.exists()){
+          const s = skillsSnap.data();
+          technicalSkillsBuffer = s.technical||[];
+          toolSkillsBuffer = s.tools||[];
+          renderTechnicalSkillsList();
+          renderToolSkillsList();
+        }
+      } catch(e){ console.error(e); }
+
+      // Projects
+      await loadProjectsForEdit();
+    }
+
+    loadAllPrefill();
+  </script>
 </body>
+
+
 
 </html>
