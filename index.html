@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Portfolio Admin Panel</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        input,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            border: none;
+            color: white;
+            font-size: 18px;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2>Portfolio Admin Panel</h2>
+
+    <label>Your Name</label>
+    <input type="text" id="name" />
+
+    <label>Bio</label>
+    <textarea id="bio"></textarea>
+
+    <label>Profile Image</label>
+    <input type="file" id="profileImage" />
+
+    <button onclick="updateData()">Update Portfolio</button>
+
+    <script type="module">
+        // IMPORT FIREBASE
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
+
+    // TODO: Replace with your config
+    const firebaseConfig = {
+      apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+    authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+    projectId: "portfolio-update-cc2b4",
+    storageBucket: "portfolio-update-cc2b4.firebasestorage.app",
+    messagingSenderId: "102177318878",
+    appId: "1:102177318878:web:fcf82473b723354dfb5f4f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const storage = getStorage(app);
+
+    const docRef = doc(db, "portfolio", "content");
+
+    // LOAD EXISTING DATA
+    async function loadData() {
+      const snap = await getDoc(docRef);
+      if (snap.exists()) {
+        const data = snap.data();
+        document.getElementById("name").value = data.name || "";
+        document.getElementById("bio").value = data.bio || "";
+      }
+    }
+    loadData();
+
+    // UPDATE DATA
+    window.updateData = async () => {
+      let name = document.getElementById("name").value;
+      let bio = document.getElementById("bio").value;
+
+      let profileUrl = null;
+      const file = document.getElementById("profileImage").files[0];
+
+      if (file) {
+        const imgRef = ref(storage, "profile.jpg");
+        await uploadBytes(imgRef, file);
+        profileUrl = await getDownloadURL(imgRef);
+      }
+
+      await updateDoc(docRef, {
+        name,
+        bio,
+        profileImg: profileUrl || null
+      });
+
+      alert("Portfolio updated!");
+    }
+  </script>
+
+</body>
+
+</html>
