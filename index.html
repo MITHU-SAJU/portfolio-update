@@ -4,155 +4,210 @@
 <head>
     <meta charset="UTF-8">
     <title>Portfolio Admin Panel</title>
+
+    <!-- ======= BASIC MODERN UI DESIGN ======= -->
     <style>
         body {
-            font-family: Arial;
-            padding: 20px;
+            font-family: 'Poppins', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
             max-width: 900px;
             margin: auto;
+            padding: 30px;
+        }
+
+        h1 {
+            background: black;
+            color: white;
+            padding: 18px;
+            text-align: center;
+            border-radius: 10px;
+        }
+
+        section {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 25px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
-            margin-top: 40px;
+            margin-bottom: 15px;
+            color: #333;
         }
 
         textarea,
         input {
             width: 100%;
-            padding: 10px;
-            margin: 8px 0;
+            padding: 12px;
+            border-radius: 6px;
+            margin: 8px 0 15px 0;
+            border: 1px solid #ccc;
+            font-size: 16px;
         }
 
         .btn {
             background: black;
             color: white;
-            padding: 10px 20px;
+            padding: 12px 20px;
+            border-radius: 6px;
             cursor: pointer;
             border: none;
+            transition: 0.3s;
+            margin-top: 10px;
         }
 
         .btn:hover {
-            opacity: 0.8;
+            background: #333;
         }
 
-        .project-box {
+        .project-card {
             border: 1px solid #ccc;
             padding: 15px;
-            margin-top: 10px;
+            background: #fafafa;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .add-btn {
+            background: #007bff;
+        }
+
+        .add-btn:hover {
+            background: #0056d2;
         }
     </style>
 </head>
 
 <body>
 
-    <h1>Portfolio Admin Panel</h1>
+    <div class="container">
 
-    <!-- ABOUT SECTION -->
-    <h2>About Section</h2>
-    <textarea id="aboutBio" rows="4" placeholder="Bio"></textarea>
-    <input id="aboutExp" placeholder="Experience (eg. 10+)" />
-    <input id="aboutProjects" placeholder="Projects Completed (eg. 03)" />
-    <button class="btn" onclick="updateAbout()">Update About</button>
+        <h1>Portfolio Admin Panel</h1>
 
-    <!-- SKILLS SECTION -->
-    <h2>Skills Section</h2>
-    <textarea id="technicalSkills" rows="3" placeholder="Technical Skills (comma separated)"></textarea>
-    <textarea id="toolSkills" rows="3" placeholder="Tools (comma separated)"></textarea>
-    <button class="btn" onclick="updateSkills()">Update Skills</button>
+        <!-- ABOUT SECTION -->
+        <section>
+            <h2>About Section</h2>
 
-    <!-- PROJECTS SECTION -->
-    <h2>Projects Section</h2>
-    <div id="projectsContainer"></div>
-    <button class="btn" onclick="addProjectForm()">+ Add Project</button>
-    <br><br>
-    <button class="btn" onclick="updateProjects()">Save All Projects</button>
+            <textarea id="bio" rows="4" placeholder="Enter your Bio..."></textarea>
+            <input id="experience" placeholder="Experience (eg. 1+ years)">
+            <input id="completed" placeholder="Projects Completed (eg. 10)">
+            <input id="resume" placeholder="Resume PDF URL">
+            <input id="aboutImage" placeholder="Profile Image URL">
 
+            <button class="btn" onclick="updateAbout()">Update About</button>
+        </section>
+
+        <!-- SKILLS SECTION -->
+        <section>
+            <h2>Skills Section</h2>
+
+            <textarea id="technicalSkills" rows="3"
+                placeholder="Technical Skills (comma separated, e.g. HTML, CSS, JS)"></textarea>
+            <textarea id="toolSkills" rows="3" placeholder="Tools (comma separated)"></textarea>
+
+            <button class="btn" onclick="updateTechnicalSkills()">Update Technical Skills</button>
+            <button class="btn" onclick="updateToolSkills()">Update Tool Skills</button>
+        </section>
+
+        <!-- PROJECT SECTION -->
+        <section>
+            <h2>Projects Section</h2>
+
+            <div id="projectForm">
+                <input id="projectTitle" placeholder="Project Title">
+                <input id="projectDesc" placeholder="Project Description">
+                <input id="projectImg" placeholder="Project Image URL">
+                <input id="projectLink" placeholder="Project Link">
+                <input id="projectBtn" placeholder="Button Text (e.g. Explore)">
+            </div>
+
+            <button class="btn add-btn" onclick="addProject()">Add Project</button>
+        </section>
+
+    </div>
+
+    <!-- ================================
+             FIREBASE SCRIPT
+    ================================ -->
     <script type="module">
         // ====== Firebase Setup ======
-    import {
-        initializeApp
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import {
-        getFirestore,
-        doc,
-        setDoc,
-        addDoc,
-        collection
-    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, setDoc, addDoc, collection } 
+        from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
-        authDomain: "portfolio-update-cc2b4.firebaseapp.com",
-        projectId: "portfolio-update-cc2b4"
-    };
+        const firebaseConfig = {
+            apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+            authDomain: "portfolio-update-cc2b4.firebaseapp.com",
+            projectId: "portfolio-update-cc2b4"
+        };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
 
-    // ===============================
-    //       UPDATE ABOUT DATA
-    // ===============================
-    window.updateAbout = async () => {
-        await setDoc(doc(db, "portfolio", "content"), {
-            name: "Mithusaju",
-            bio: document.getElementById("bio").value,
-            experience: document.getElementById("experience").value,
-            projectsCompleted: document.getElementById("completed").value,
-            resumePdf: document.getElementById("resume").value,
-            profileImg: document.getElementById("aboutImage").value
-        });
+        // ===============================
+        //       UPDATE ABOUT DATA
+        // ===============================
+        window.updateAbout = async () => {
+            await setDoc(doc(db, "portfolio", "content"), {
+                name: "Mithusaju",
+                bio: document.getElementById("bio").value,
+                experience: document.getElementById("experience").value,
+                projectsCompleted: document.getElementById("completed").value,
+                resumePdf: document.getElementById("resume").value,
+                profileImg: document.getElementById("aboutImage").value
+            });
 
-        alert("About Section Updated Successfully!");
-    };
+            alert("About Section Updated Successfully!");
+        };
 
-    // ===============================
-    //     UPDATE TECHNICAL SKILLS
-    // ===============================
-    window.updateTechnicalSkills = async () => {
-        const skills = document
-            .getElementById("technicalSkills")
-            .value.split(",")
-            .map(s => s.trim());
+        // ===============================
+        //     UPDATE TECHNICAL SKILLS
+        // ===============================
+        window.updateTechnicalSkills = async () => {
+            const skills = document.getElementById("technicalSkills").value
+                .split(",")
+                .map(s => s.trim());
 
-        await setDoc(doc(db, "portfolio", "skillsTechnical"), {
-            skills
-        });
+            await setDoc(doc(db, "portfolio", "skillsTechnical"), { skills });
 
-        alert("Technical Skills Updated!");
-    };
+            alert("Technical Skills Updated!");
+        };
 
-    // ===============================
-    //        UPDATE TOOL SKILLS
-    // ===============================
-    window.updateToolSkills = async () => {
-        const skills = document
-            .getElementById("toolSkills")
-            .value.split(",")
-            .map(s => s.trim());
+        // ===============================
+        //        UPDATE TOOL SKILLS
+        // ===============================
+        window.updateToolSkills = async () => {
+            const skills = document.getElementById("toolSkills").value
+                .split(",")
+                .map(s => s.trim());
 
-        await setDoc(doc(db, "portfolio", "skillsTools"), {
-            skills
-        });
+            await setDoc(doc(db, "portfolio", "skillsTools"), { skills });
 
-        alert("Tool Skills Updated!");
-    };
+            alert("Tool Skills Updated!");
+        };
 
-    // ===============================
-    //        ADD PROJECT
-    // ===============================
-    window.addProject = async () => {
-        await addDoc(collection(db, "portfolio", "projects", "items"), {
-            title: document.getElementById("projectTitle").value,
-            desc: document.getElementById("projectDesc").value,
-            img: document.getElementById("projectImg").value,
-            link: document.getElementById("projectLink").value,
-            buttonText: document.getElementById("projectBtn").value
-        });
+        // ===============================
+        //        ADD PROJECT
+        // ===============================
+        window.addProject = async () => {
+            await addDoc(collection(db, "portfolio", "projects", "items"), {
+                title: document.getElementById("projectTitle").value,
+                desc: document.getElementById("projectDesc").value,
+                img: document.getElementById("projectImg").value,
+                link: document.getElementById("projectLink").value,
+                buttonText: document.getElementById("projectBtn").value
+            });
 
-        alert("Project Added!");
-    };
-</script>
+            alert("Project Added Successfully!");
+        };
 
+    </script>
 
 </body>
 
