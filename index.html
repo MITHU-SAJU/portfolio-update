@@ -50,63 +50,84 @@
     <input type="file" id="profileImage" />
 
     <button onclick="updateData()">Update Portfolio</button>
-
     <script type="module">
         // IMPORT FIREBASE
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
-    import { getFirestore, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
-    import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-app.js";
+  import { 
+    getFirestore, doc, getDoc, setDoc 
+  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-firestore.js";
+  import { 
+    getStorage, ref, uploadBytes, getDownloadURL 
+  } from "https://www.gstatic.com/firebasejs/10.4.0/firebase-storage.js";
 
-    // TODO: Replace with your config
-    const firebaseConfig = {
-      apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
+  // FIREBASE CONFIG
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLPUtK-NGtlOQUdS_Fe19NqcRiz3eFeCk",
     authDomain: "portfolio-update-cc2b4.firebaseapp.com",
     projectId: "portfolio-update-cc2b4",
     storageBucket: "portfolio-update-cc2b4.firebasestorage.app",
     messagingSenderId: "102177318878",
     appId: "1:102177318878:web:fcf82473b723354dfb5f4f"
-    };
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const storage = getStorage(app);
+  // INITIALIZE
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const storage = getStorage(app);
 
-    const docRef = doc(db, "portfolio", "content");
+  // Firestore Document Reference
+  const docRef = doc(db, "portfolio", "content");
 
-    // LOAD EXISTING DATA
-    async function loadData() {
+  // LOAD EXISTING DATA
+  async function loadData() {
+    try {
       const snap = await getDoc(docRef);
+
       if (snap.exists()) {
         const data = snap.data();
+        console.log("Loaded data:", data);
+
         document.getElementById("name").value = data.name || "";
         document.getElementById("bio").value = data.bio || "";
+      } else {
+        console.warn("Document does not exist yet.");
       }
+    } catch (err) {
+      console.error("Error loading:", err);
     }
-    loadData();
+  }
+  loadData();
 
-    // UPDATE DATA
-    window.updateData = async () => {
+  // SAVE / UPDATE DATA
+  window.updateData = async () => {
+    try {
       let name = document.getElementById("name").value;
       let bio = document.getElementById("bio").value;
 
       let profileUrl = null;
       const file = document.getElementById("profileImage").files[0];
 
+      // Upload image if selected
       if (file) {
         const imgRef = ref(storage, "profile.jpg");
         await uploadBytes(imgRef, file);
         profileUrl = await getDownloadURL(imgRef);
       }
 
-      await updateDoc(docRef, {
+      // Use setDoc so it works even if doc does NOT exist
+      await setDoc(docRef, {
         name,
         bio,
         profileImg: profileUrl || null
-      });
+      }, { merge: true });
 
-      alert("Portfolio updated!");
+      alert("Portfolio updated successfully!");
+    } catch (err) {
+      console.error("Update error:", err);
+      alert("Error updating data. Check console.");
     }
-  </script>
+  };
+</script>
 
 </body>
 
